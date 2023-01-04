@@ -1,0 +1,11 @@
+numpy>=1.23.3
+pandas>=1.5.1
+torch>=1.12.1
+sklearn>=0.0
+tqdm>=4.64.1
+wandb>=0.13.4
+torchvision>=0.13.1
+opencv-python>=4.6.0.66
+matplotlib>=3.5.2
+pillow>=9.2.0
+scikit-learn>=1.1.2
