@@ -30,6 +30,7 @@ class PoisonCrafter:
                  normalizer: transforms = transforms.Compose([]), log_freq=10, augmentations=True, model_path=None,
                  patch_size=8, train_print_freq=5, norm='l_inf'):
         self.device = device
+        self.log_wandb = log_wandb
 
         self.r = None
         self.log_freq = log_freq
@@ -111,7 +112,6 @@ class PoisonCrafter:
         self.poisoned_dataset = ds_utils.PoisonedDataset(clean_dataset=clean_dataset, eps=self.eps,
                                                          norm=self.norm, indexes=indexes)
 
-        self.log_wandb = log_wandb
 
     def optimize_trigger(self, epochs, eps, lr, gamma):
         trigger = self.trigger_injector.trigger
