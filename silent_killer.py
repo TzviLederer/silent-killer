@@ -33,7 +33,7 @@ def get_args():
 
     # attacker settings
     arg_parser.add_argument('-s', '--source_label', type=int, default=0, help='source class')
-    arg_parser.add_argument('-t', '--target_label', type=int, default=4, help='target class')
+    arg_parser.add_argument('-t', '--target_label', type=int, default=3, help='target class')
 
     arg_parser.add_argument('-p', '--model_path', type=str, default=None,
                             help='If none, the initial model will be train from scratch, '
