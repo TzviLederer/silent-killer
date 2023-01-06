@@ -149,7 +149,8 @@ def main():
                                    alpha_poison=args.alpha_poison, alpha_trigger=args.alpha_trigger,
                                    trigger_batch_size=args.trigger_batch_size, patch_size=args.patch_size,
                                    trigger_init_method=args.trigger_init_method, log_wandb=args.wandb,
-                                   trigger_type=args.trigger_type, device=device, eps=args.eps,
+                                   trigger_type=args.trigger_type, device=device,
+                                   eps_p=args.eps, eps_t=args.trigger_opt_eps,
                                    patch_path=args.patch_path, trigger_loc=args.trigger_loc,
                                    train_print_freq=args.train_print_freq, norm=args.perturbations_norm,
                                    retraining_factor=args.retraining_factor, retraining_loss=args.retraining_loss,
@@ -188,3 +189,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

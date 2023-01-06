@@ -26,9 +26,9 @@ class PoisonCrafter:
                  victim_lr, victim_momentum, victim_weight_decay, victim_milestones, victim_gamma, victim_loss,
                  victim_batch_size, victim_optimizer, alpha_poison, alpha_trigger, crafting_repetitions,
                  poison_selection, trigger_batch_size, trigger_init_method, log_wandb, trigger_type, device, patch_path,
-                 trigger_loc, eps, retraining_factor, retraining_epochs, retraining_batch_size, retraining_loss,
-                 normalizer: transforms = transforms.Compose([]), log_freq=10, augmentations=True, model_path=None,
-                 patch_size=8, train_print_freq=5, norm='l_inf'):
+                 trigger_loc, eps_p, eps_t, retraining_factor, retraining_epochs, retraining_batch_size,
+                 retraining_loss, normalizer: transforms = transforms.Compose([]), log_freq=10, augmentations=True,
+                 model_path=None, patch_size=8, train_print_freq=5, norm='l_inf'):
         self.device = device
         self.log_wandb = log_wandb
 
@@ -41,7 +41,8 @@ class PoisonCrafter:
         self.poison_selection = poison_selection  # 'random' or 'gradient'
         self.patch_size = (3, patch_size, patch_size)
         self.trigger_batch_size = trigger_batch_size
-        self.eps = eps
+        self.eps_p = eps_p
+        self.eps_t = eps_t
         self.norm = norm
 
         # victim training parameters
@@ -109,9 +110,8 @@ class PoisonCrafter:
 
         # Create poison set
         indexes = self._choose_indexes()
-        self.poisoned_dataset = ds_utils.PoisonedDataset(clean_dataset=clean_dataset, eps=self.eps,
+        self.poisoned_dataset = ds_utils.PoisonedDataset(clean_dataset=clean_dataset, eps=self.eps_p,
                                                          norm=self.norm, indexes=indexes)
-
 
     def optimize_trigger(self, epochs, eps, lr, gamma):
         trigger = self.trigger_injector.trigger
@@ -228,13 +228,13 @@ class PoisonCrafter:
 
         trigger = self.trigger_injector.trigger.detach()
         trigger -= grads[0].sign() * self.alpha_trigger
-        trigger = torch.clip(trigger, -self.eps, self.eps)
+        trigger = torch.clip(trigger, -self.eps_t, self.eps_t)
         trigger.requires_grad_()
         self.trigger_injector.trigger = trigger
 
         poison = self.poisoned_dataset.poison_subset.poison.detach()
         poison -= grads[1].sign() * self.alpha_poison
-        poison = torch.clip(poison, -self.eps, self.eps)
+        poison = torch.clip(poison, -self.eps_p, self.eps_p)
         poison.requires_grad_()
         self.poisoned_dataset.poison_subset.poison = poison
 
