@@ -13,6 +13,7 @@ Run `pip install -r requirements.txt` to install requirements, and then run the 
 ### General
 We demonstrate both attacks, perturbation as trigger and patch as trigger. \
 The code implements the CIFAR-10 experiments.
+Results are available in our [WandB project](https://wandb.ai/tzvi/silent-killer?workspace=user-tzvi).
 
 ### Perturbation
 To run our main attack: \
