@@ -25,12 +25,13 @@ def main():
                   '--craft_model {} --eval_model {} --entity {} --name {}-{}  --wandb true  --n_samples 0 ' \
                   '--crafting_repetitions 0\n'
     if args.trigger_type == 'patch' and args.experiment == 'silent_killer':
-        command = 'python silent_killer.py -s {} -t {} --trigger_type adaptive_patch --eps 1 --model_path {} ' \
-                  '--craft_model {} --eval_model {} --entity {} --name {}-{}  --wandb true\n'
+        command = 'python silent_killer.py -s {} -t {} --trigger_type adaptive_patch --eps 0.062745 ' \
+                  '--trigger_opt_eps 1 --model_path {} --craft_model {} --eval_model {} --entity {} --name {}-{}  ' \
+                  '--wandb true\n'
     if args.trigger_type == 'patch' and args.experiment == 'base':
-        command = 'python silent_killer.py -s {} -t {} --trigger_type adaptive_patch --eps 1 --model_path {} ' \
-                  '--craft_model {} --eval_model {} --entity {} --name {}-{}  --wandb true  --trigger_opt false ' \
-                  '--trigger_init_method from_file\n'
+        command = 'python silent_killer.py -s {} -t {} --trigger_type adaptive_patch --eps 0.062745 ' \
+                  '--trigger_opt_eps 1 --model_path {} --craft_model {} --eval_model {} --entity {} --name {}-{}  ' \
+                  '--wandb true  --trigger_opt false --trigger_init_method from_file\n'
     with open(filename, 'w') as f:
         for s, t in pairs:
             f.write(command.format(s, t, args.model_path, args.model_arch, args.model_arch, args.wandb_entity,

@@ -112,7 +112,6 @@ class PoisonCrafter:
         self.poisoned_dataset = ds_utils.PoisonedDataset(clean_dataset=clean_dataset, eps=self.eps,
                                                          norm=self.norm, indexes=indexes)
 
-
     def optimize_trigger(self, epochs, eps, lr, gamma):
         trigger = self.trigger_injector.trigger
         if self.trigger_type == 'adaptive_patch':
