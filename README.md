@@ -1,7 +1,7 @@
 # Silent Killer
 
 ## Background
-The project is the official implementation of the paper Silent Killer: Optimizing Backdoor Trigger Yields a Stealthy and Powerful Data Poisoning Attack.
+The project is the official implementation of the paper [Silent Killer: Optimizing Backdoor Trigger Yields a Stealthy and Powerful Data Poisoning Attack](https://arxiv.org/abs/2301.02615).
 ![Overview](overview.png)
 
 ## Requirements
