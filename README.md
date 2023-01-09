@@ -24,10 +24,10 @@ To run the baseline (without poisoning): \
 
 ### Patch
 To run the optimized-patch: \
-```python silent_killer.py --trigger_type adaptive_patch --eps 1```
+```python silent_killer.py --trigger_type adaptive_patch --eps 0.062745 --trigger_opt_eps 1```
 
 To run the baseline (without trigger optimization): \
-```python silent_killer.py --trigger_type adaptive_patch --eps 1 --trigger_opt false --trigger_init_method from_file```
+```python silent_killer.py --trigger_type adaptive_patch --eps 0.062745 --trigger_opt_eps 1 --trigger_opt false --trigger_init_method from_file```
 
 ### Important parameters
  - To specify source label and target label use `-s` and `-t` flags. 
