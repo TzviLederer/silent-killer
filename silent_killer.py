@@ -84,7 +84,7 @@ def get_args():
     arg_parser.add_argument('--victim_gamma', type=float, default=0.1, help='scheduler milestones')
     arg_parser.add_argument('--victim_lr', type=float, default=0.1)
     arg_parser.add_argument('--victim_momentum', type=float, default=0.9)
-    arg_parser.add_argument('--victim_weight_decay', type=float, default=4e-4)
+    arg_parser.add_argument('--victim_weight_decay', type=float, default=5e-4)
     arg_parser.add_argument('--victim_loss', default='cross_entropy')
     arg_parser.add_argument('--victim_optimizer', default='nesterov')
     arg_parser.add_argument('--victim_batch_size', default=128, type=int)

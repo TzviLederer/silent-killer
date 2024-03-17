@@ -12,7 +12,7 @@ from torchvision.transforms import Compose, RandomHorizontalFlip, RandomCrop
 from utils import datasets as ds_utils
 from utils.poison_optimizer import optimize_poison, optimize_poison_additive
 from utils.utils import init_loss, init_optimizer, gradient_matching, resnet18, vgg11, mobilenet, DEBUG
-
+from utils.aug import RandomTransform
 
 def get_trigger_function(trigger_type, **kwargs):
     if trigger_type == 'additive':
@@ -74,7 +74,8 @@ class PoisonCrafter:
         self.victim_loss = init_loss(victim_loss)
 
         if augmentations:
-            self.augmentations = Compose([RandomHorizontalFlip(p=0.5), RandomCrop(32, padding=4)])
+            # self.augmentations = Compose([RandomHorizontalFlip(p=0.5), RandomCrop(32, padding=4)])
+            self.augmentations = RandomTransform(source_size=32, target_size=32, shift=8, fliplr=True)
         else:
             self.augmentations = transforms.Compose([])
 

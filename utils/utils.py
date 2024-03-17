@@ -4,11 +4,13 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
+import torchvision
 import wandb
 from matplotlib import pyplot as plt
 from torch import optim, nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms, models
+from utils.models import ResNet
 
 DEBUG = False
 
@@ -86,10 +88,14 @@ def init_loss(loss):
 
 def resnet18(pretrained=False, out_features=10):
     if pretrained:
-        model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+        raise NotImplementedError
+        # model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
     else:
-        model = models.resnet18()
-    return nn.Sequential(*list(model.children())[:-1], torch.nn.Flatten(), nn.Linear(512, out_features))
+        return ResNet(torchvision.models.resnet.BasicBlock,
+                      [2, 2, 2, 2],
+                      num_classes=10,
+                      base_width=64,
+                      initial_conv=[3, 1, 1])
 
 
 def vgg11(pretrained=False, out_features=10):
