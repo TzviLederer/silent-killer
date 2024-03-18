@@ -13,6 +13,9 @@ from utils import datasets as ds_utils
 from utils.poison_optimizer import optimize_poison, optimize_poison_additive
 from utils.utils import init_loss, init_optimizer, gradient_matching, resnet18, vgg11, mobilenet, DEBUG
 from utils.aug import RandomTransform
+from utils.mobilenet import MobileNetV2
+from utils.vgg import VGG
+
 
 def get_trigger_function(trigger_type, **kwargs):
     if trigger_type == 'additive':
@@ -65,9 +68,9 @@ class PoisonCrafter:
         if model_initializer == 'resnet18':
             self.model_initializer = resnet18
         elif model_initializer == 'vgg11':
-            self.model_initializer = vgg11
+            self.model_initializer = lambda: VGG('VGG11')
         elif model_initializer == 'mobilenet_v2':
-            self.model_initializer = mobilenet
+            self.model_initializer = lambda: MobileNetV2(num_classes=10, train_dp=0, test_dp=0, droplayer=0, bdp=0)
         else:
             raise NotImplementedError
         self.loss_fn = init_loss(self.retraining_loss)
@@ -324,7 +327,7 @@ class PoisonCrafter:
                 self.print_metrics(dataset)
 
             self.scheduler.step()
-        # torch.save(self.model.state_dict(), 'checkpoints/resnet-clean.pt')
+        torch.save(self.model.state_dict(), 'checkpoints/mobilenet-clean.pt')
 
     def print_metrics(self, dataset):
         loss_train, acc_train = self._compute_acc(dataset)
