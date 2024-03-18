@@ -213,11 +213,21 @@ class PoisonCrafter:
         dataloader_train = DataLoader(self.trigger_set, batch_size=batch_size, shuffle=True)
 
         # training loop
-        loss = 0
-        for step, (x_batch, y_batch, y_target) in enumerate(dataloader_train):
-            loss += self._compute_loss(x_batch, y_target)
-            if DEBUG:
-                break
+        trigger_grads = None
+        for x_batch, y_batch, y_target in dataloader_train:
+            grad_i = self._compute_trigger_gradient(x_batch, y_batch)
+            if trigger_grads is None:
+                trigger_grads = grad_i
+            else:
+                for i, gi in enumerate(grad_i):
+                    trigger_grads[i] += gi
+        poison_grads = self._compute_poison_gradient()
+        loss = gradient_matching(trigger_grads, poison_grads)
+
+        # for step, (x_batch, y_batch, y_target) in enumerate(dataloader_train):
+        #     loss += self._compute_loss(x_batch, y_target)
+        #     if DEBUG:
+        #         break
 
         self._poison_optimization_step(loss)
         loss = loss.detach().cpu().tolist()
@@ -225,16 +235,18 @@ class PoisonCrafter:
         self.log_poisoning(loss=loss, log_wandb=self.log_wandb)
 
     def _poison_optimization_step(self, loss):
-        grads = torch.autograd.grad(loss, (self.trigger_injector.trigger, self.poisoned_dataset.poison_subset.poison))
+        # grads = torch.autograd.grad(loss, (self.trigger_injector.trigger, self.poisoned_dataset.poison_subset.poison))
+        grads = torch.autograd.grad(loss, self.poisoned_dataset.poison_subset.poison)
 
-        trigger = self.trigger_injector.trigger.detach()
-        trigger -= grads[0].sign() * self.alpha_trigger
-        trigger = torch.clip(trigger, -self.eps_t, self.eps_t)
-        trigger.requires_grad_()
-        self.trigger_injector.trigger = trigger
+        # trigger = self.trigger_injector.trigger.detach()
+        # trigger -= grads[0].sign() * self.alpha_trigger
+        # trigger = torch.clip(trigger, -self.eps_t, self.eps_t)
+        # trigger.requires_grad_()
+        # self.trigger_injector.trigger = trigger
 
         poison = self.poisoned_dataset.poison_subset.poison.detach()
-        poison -= grads[1].sign() * self.alpha_poison
+        # poison -= grads[1].sign() * self.alpha_poison
+        poison -= grads[0].sign() * self.alpha_poison
         poison = torch.clip(poison, -self.eps_p, self.eps_p)
         poison.requires_grad_()
         self.poisoned_dataset.poison_subset.poison = poison
@@ -268,7 +280,9 @@ class PoisonCrafter:
         loss = self.victim_loss(pred, y)
 
         model_params = [p for p in self.model.parameters() if p.requires_grad]
-        return torch.autograd.grad(loss, model_params, retain_graph=True, create_graph=True)
+        grads = torch.autograd.grad(loss, model_params) #, retain_graph=True, create_graph=True)
+        grads = [g.detach() for g in grads]
+        return grads
 
     def _compute_poison_gradient(self):
         loss = 0
@@ -310,6 +324,7 @@ class PoisonCrafter:
                 self.print_metrics(dataset)
 
             self.scheduler.step()
+        # torch.save(self.model.state_dict(), 'checkpoints/resnet-clean.pt')
 
     def print_metrics(self, dataset):
         loss_train, acc_train = self._compute_acc(dataset)

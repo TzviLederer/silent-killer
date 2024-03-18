@@ -70,7 +70,7 @@ def get_args():
                             help='can be tuple of (y, x) or `rand`. used if the trigger is a patch')
     arg_parser.add_argument('--trigger_init_method', type=str, default='randn', choices=['from_file', 'randn'],
                             help='initialization of patch trigger, can be `from_file` or `randn` (random init)')
-    arg_parser.add_argument('--trigger_batch_size', type=int, default=8_192)
+    arg_parser.add_argument('--trigger_batch_size', type=int, default=1) #8_192
     arg_parser.add_argument('--patch_size', type=int, default=8, help='patch size if the trigger is a patch')
     arg_parser.add_argument('--trigger_opt_epochs', type=int, default=500,
                             help='epochs num in pre-training trigger optimization, 500')
